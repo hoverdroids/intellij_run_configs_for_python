@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Upgrade PIP" type="ShConfigurationType" folderName="Python: PIP">
-    <option name="SCRIPT_TEXT" value="pip install --upgrade pip" />
+    <option name="SCRIPT_TEXT" value="python -m pip install --upgrade pip " />
     <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
     <option name="SCRIPT_PATH" value="" />
     <option name="SCRIPT_OPTIONS" value="" />
