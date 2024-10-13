@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Install Git Pre-commit" type="ShConfigurationType" folderName="Python: PIP">
-    <option name="SCRIPT_TEXT" value="python -c 'import subprocess; import sys; print(&quot;... Pre-commit Run Config Start ...&quot;); subprocess.check_call([sys.executable,&quot;-m&quot;,&quot;pip&quot;,&quot;install&quot;,&quot;pre-commit&quot;]); print(&quot;... Pre-commit Run Config End ...&quot;);'" />
+  <configuration default="false" name="Install Requests (HTTP)" type="ShConfigurationType" folderName="Python: HTTP">
+    <option name="SCRIPT_TEXT" value="python -c 'import subprocess; import sys; print(&quot;... Requests Run Config Start ...&quot;); subprocess.check_call([sys.executable,&quot;-m&quot;,&quot;pip&quot;,&quot;install&quot;,&quot;requests&quot;]); print(&quot;... Requests Run Config End ...&quot;);'" />
     <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
     <option name="SCRIPT_PATH" value="" />
     <option name="SCRIPT_OPTIONS" value="" />

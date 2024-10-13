@@ -15,8 +15,7 @@
     <method v="2">
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="Install Loguru (Loggging)" run_configuration_type="ShConfigurationType" />
       <option name="RunConfigurationTask" enabled="true" run_configuration_name="Install Ruff (Linter/Formatter)" run_configuration_type="ShConfigurationType" />
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Install Requests (HTTP)" run_configuration_type="ShConfigurationType" />
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Install Git Pre-commit" run_configuration_type="ShConfigurationType" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Install Git Pre-commit for Python" run_configuration_type="ShConfigurationType" />
     </method>
   </configuration>
 </component>

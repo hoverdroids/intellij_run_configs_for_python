@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Install Ruff (Linter/Formatter)" type="ShConfigurationType" folderName="Python: PIP">
-    <option name="SCRIPT_TEXT" value="python -c 'import subprocess; import sys; print(&quot;... Ruff Run Config Start ...&quot;); subprocess.check_call([sys.executable,&quot;-m&quot;,&quot;pip&quot;,&quot;install&quot;,&quot;ruff&quot;]); print(&quot;... Ruff Run Config End ...&quot;);'" />
+  <configuration default="false" name="Install Loguru (Loggging)" type="ShConfigurationType" folderName="Python: Logging">
+    <option name="SCRIPT_TEXT" value="python -c 'import subprocess; import sys; print(&quot;... Loguru Run Config Start ...&quot;); subprocess.check_call([sys.executable,&quot;-m&quot;,&quot;pip&quot;,&quot;install&quot;,&quot;loguru&quot;]); print(&quot;... Loguru Run Config End ...&quot;);'" />
     <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
     <option name="SCRIPT_PATH" value="" />
     <option name="SCRIPT_OPTIONS" value="" />
