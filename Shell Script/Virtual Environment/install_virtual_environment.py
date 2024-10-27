@@ -1,3 +1,4 @@
+import platform
 import tkinter
 from sys import exception
 from tkinter import messagebox
@@ -10,14 +11,52 @@ import venv
 
 DIALOG_TITLE = "Create Virtual Environment"
 
-def is_safe_to_create_directory(dialog_title: str, directory: str) -> bool:
+def open_directory_if_desired(dialog_title: str, directory: str):
+    if not os.path.isdir(directory):
+        messagebox.showerror(
+            title=dialog_title,
+            message="The directory does not exist",
+            detail=directory
+        )
+        return
+
+    do_open_directory:bool = messagebox.askyesno(
+        title=dialog_title,
+        message="Open directory?",
+        detail=directory
+    )
+    if not do_open_directory:
+        return
+
+    os_name = platform.system().lower()
+    if do_open_directory and os_name == "windows":
+        os.startfile(directory)
+    elif do_open_directory and os_name == "darwin":#macOs
+        os.system(f"open {directory}")
+    elif do_open_directory and os_name == "linux":
+        os.system(f"xdg-open {directory}")
+    else:
+        messagebox.showerror(
+            title=dialog_title,
+            message=f"Couldn't open directory. Only Windows, MacOS, and Linux are supported",
+            detail=directory
+        )
+
+def is_safe_to_create_directory(dialog_title: str, directory: str) -> bool|None:
     if os.path.exists(directory):
-        do_override_existing_directory: bool = messagebox.askyesnocancel(
+        do_override_existing_directory: bool|None = messagebox.askyesnocancel(
             title=dialog_title,
             message=f"The directory already exists; override it?",
             detail=directory
         )
-        return do_override_existing_directory
+
+        if do_override_existing_directory is None:
+            print(f"User cancelled the operation")
+            return None
+        elif not do_override_existing_directory:
+            print(f"User opted not to override the existing directory")
+            return False
+
     return True
 
 def ask_user_for_virtual_environment_directory_name(dialog_title: str) -> str | None:
@@ -33,14 +72,13 @@ def ask_user_for_virtual_environment_directory_name(dialog_title: str) -> str | 
     root.destroy()
 
     if user_entered_directory_name is None:
-        print(f"User opted not to set a custom virtual environment directory name")
+        print(f"User cancelled the operation")
+        return None
     else:
         print(f"User set the virtual environment directory name to {user_entered_directory_name}")
-        directory_name = user_entered_directory_name
+        return user_entered_directory_name
 
-    return directory_name
-
-def ask_user_for_virtual_environment_directory(dialog_title: str, initial_directory: str) -> str | None:
+def ask_user_to_select_virtual_environment_directory(dialog_title: str, initial_directory: str) -> str | None:
     root = tkinter.Tk()
     root.withdraw() # Hide the main window
 
@@ -51,8 +89,8 @@ def ask_user_for_virtual_environment_directory(dialog_title: str, initial_direct
 
     root.destroy()
 
-    if user_selected_directory is None:
-        print(f"User opted not to select a directory")
+    if user_selected_directory == "":
+        print(f"User cancelled the operation")
         return None
     else:
         print(f"User selected directory {user_selected_directory}")
@@ -60,58 +98,72 @@ def ask_user_for_virtual_environment_directory(dialog_title: str, initial_direct
 
 def try_create_virtual_environment_in_directory(dialog_title: str, directory: str, with_pip:bool = True) -> bool:
 
-    if not is_safe_to_create_directory(dialog_title, directory):
-        return False
+    is_safe = is_safe_to_create_directory(dialog_title, directory)
+
+    if is_safe is None or not is_safe:
+        exit()
 
     try:
         venv.create(directory, with_pip=with_pip)
         print(f"Created virtual environment in directory {directory}")
+
+        open_directory_if_desired(dialog_title, directory)
+
         return True
     except Exception as e:
         print(f"Failed to create virtual environment in directory{directory}: {e}")
         return False
 
-def create_virtual_environment_in_directory_if_desired(dialog_title: str, dialog_message: str, directory: str) -> bool:
-    do_create_in_user_directory:bool = messagebox.askyesnocancel(
+def create_virtual_environment_in_directory_if_desired(dialog_title: str, dialog_message: str, directory: str) -> bool|None:
+    do_create_in_user_directory:bool|None = messagebox.askyesnocancel(
         title=dialog_title,
         message=dialog_message,
         detail=directory
     )
 
-    if do_create_in_user_directory:
-        return try_create_virtual_environment_in_directory(dialog_title, directory)
+    if do_create_in_user_directory is None:
+        print(f"User cancelled the operation")
+        return None
 
-    print(f"User opted not to create virtual environment in directory: {directory}")
-    return False
+    if not do_create_in_user_directory:
+        print(f"User opted not to create virtual environment in directory: {directory}")
+        return False
 
+    return try_create_virtual_environment_in_directory(dialog_title, directory)
 
-virtual_environment_directory_name = ask_user_for_virtual_environment_directory_name(DIALOG_TITLE)
+def create_virtual_environment_in_user_directory_if_desired(virtual_environment_directory_name:str):
+    dialog_message = f"Create virtual environment in user directory?"
+    directory = os.path.join(os.path.expanduser("~"), virtual_environment_directory_name)
+    created_virtual_environment = create_virtual_environment_in_directory_if_desired(DIALOG_TITLE, dialog_message, directory)
 
-dialog_message = f"Create virtual environment in user directory?"
-directory = os.path.join(os.path.expanduser("~"), virtual_environment_directory_name)
-created_virtual_environment = create_virtual_environment_in_directory_if_desired(DIALOG_TITLE, dialog_message, directory)
+    if created_virtual_environment is None or created_virtual_environment:
+        exit()
 
-if created_virtual_environment:
-    exit()
+def create_virtual_environment_in_working_directory_if_desired(virtual_environment_directory_name:str):
+    dialog_message = f"Create virtual environment in working directory?"
+    directory = os.path.join(os.getcwd(), virtual_environment_directory_name)
+    created_virtual_environment = create_virtual_environment_in_directory_if_desired(DIALOG_TITLE, dialog_message, directory)
 
-dialog_message = f"Create virtual environment in working directory?"
-directory = os.path.join(os.getcwd(), virtual_environment_directory_name)
-created_virtual_environment = create_virtual_environment_in_directory_if_desired(DIALOG_TITLE, dialog_message, directory)
+    if created_virtual_environment is None or created_virtual_environment:
+        exit()
 
-if created_virtual_environment:
-    exit()
+def create_virtual_environment_in_selected_directory_if_desired(virtual_environment_directory_name:str):
+    dialog_message = f"Select a directory to create the virtual environment in"
+    directory = ask_user_to_select_virtual_environment_directory(dialog_message, os.getcwd())
 
-dialog_message = f"Select a directory to create the virtual environment in"
-directory = ask_user_for_virtual_environment_directory(dialog_message, os.getcwd())
-if directory is None:
-    print(f"User opted not to select a directory")
-else:
-    print(f"User selected directory {directory}")
+    if directory is None:
+        exit()
+
     directory = os.path.join(directory, virtual_environment_directory_name)
     try_create_virtual_environment_in_directory(DIALOG_TITLE, directory)
 
+virtual_environment_directory_name = ask_user_for_virtual_environment_directory_name(DIALOG_TITLE)
+if virtual_environment_directory_name is None:
+    exit()
 
-
+create_virtual_environment_in_user_directory_if_desired(virtual_environment_directory_name)
+create_virtual_environment_in_working_directory_if_desired(virtual_environment_directory_name)
+create_virtual_environment_in_selected_directory_if_desired(virtual_environment_directory_name)
 
 
 
